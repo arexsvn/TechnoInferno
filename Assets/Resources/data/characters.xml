@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<characters>
+  <character id="player" name="player_name" textColor="#c4ae95">
+    <details>
+      <detail label="character_detail_label_age">player_age</detail>
+      <detail label="character_detail_label_occupation">player_occupation</detail>
+      <detail label="character_detail_label_relationship">player_relationship</detail>
+    </details>
+	<outcomes></outcomes>
+  </character>
+  <character id="fabiana" name="fabiana_name" textColor="#551183">
+    <details>
+      <detail label="character_detail_label_age">fabiana_age</detail>
+      <detail label="character_detail_label_occupation">fabiana_occupation</detail>
+      <detail label="character_detail_label_relationship">fabiana_relationship</detail>
+    </details>
+	<outcomes>test1</outcomes>
+  </character>
+  <character id="giskard" name="giskard_name" textColor="#7ab0bd">
+	<details>
+		<detail label="character_detail_label_age">giskard_age</detail>
+		<detail label="character_detail_label_occupation">giskard_occupation</detail>
+		<detail label="character_detail_label_relationship">giskard_relationship</detail>
+	</details>
+	<outcomes>test,test2,test3</outcomes>
+  </character>
+</characters>
