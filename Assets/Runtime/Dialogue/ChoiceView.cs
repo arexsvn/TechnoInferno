@@ -1,14 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using signals;
 using UnityEngine.UI;
+using System;
 
 public class ChoiceView : MonoBehaviour
 {
     public TextMeshProUGUI textArea;
-    public Signal click = new Signal();
+    public Action Clicked;
 
     public void Start()
     {
@@ -20,11 +18,10 @@ public class ChoiceView : MonoBehaviour
     {
         Button button = gameObject.GetComponentInChildren<Button>();
         button.onClick.RemoveListener(OnClick);
-        click.RemoveAll();
     }
 
     private void OnClick()
     {
-        click.Dispatch();
+        Clicked?.Invoke();
     }
 }

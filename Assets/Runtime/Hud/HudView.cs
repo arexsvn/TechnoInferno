@@ -1,24 +1,24 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using signals;
 
 public class HudView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public GameObject buttonContainer;
     public CanvasGroup canvasGroup;
-    public Signal over = new Signal();
-    public Signal off = new Signal();
+    public Action Over;
+    public Action Off;
     public ButtonView hudElement;
     private bool _showing = false;
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        over.Dispatch();
+        Over?.Invoke();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        off.Dispatch();
+        Off?.Invoke();
     }
 
     public async void show(bool show = true)

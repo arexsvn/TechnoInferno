@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using signals;
 using TMPro;
 using System;
 using System.Globalization;
@@ -9,8 +8,8 @@ public class ClockView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 {
     public TextMeshProUGUI _timeDisplayText;
     public CanvasGroup canvasGroup;
-    public Signal over = new Signal();
-    public Signal off = new Signal();
+    public Action over;
+    public Action off;
 
     private void Awake()
     {
@@ -19,12 +18,12 @@ public class ClockView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        over.Dispatch();
+        over.Invoke();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        off.Dispatch();
+        off.Invoke();
     }
 
     public void SetTime(DateTime time)

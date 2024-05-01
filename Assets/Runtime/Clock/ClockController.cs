@@ -19,8 +19,8 @@ public class ClockController
         _currentDay = _gameTime.Day;
 
         _view = await _assetService.InstantiateAsync<ClockView>();
-        _view.over.Add(handleOver);
-        _view.off.Add(() => show(false));
+        _view.over += handleOver;
+        _view.off += () => show(false);
 
         _view.SetTime(_gameTime);
 

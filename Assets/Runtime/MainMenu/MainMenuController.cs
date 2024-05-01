@@ -1,15 +1,12 @@
-using UnityEngine;
-using signals;
 using System;
-using UnityEngine.U2D;
 using System.Threading.Tasks;
 
 public class MainMenuController
 {
-    public Signal newGame;
-    public Signal resumeGame;
-    public Signal loadGame;
-    public Signal quitGame;
+    public Action NewGame;
+    public Action ResumeGame;
+    public Action LoadGame;
+    public Action QuitGame;
     private MainMenuView _view;
     private static string BUTTON_PREFAB = "UI/MainMenuButton";
     private ButtonView _resumeButton;
@@ -26,52 +23,35 @@ public class MainMenuController
         _assetService = assetService;
     }
 
-    SpriteAtlas spriteAtlas;
-
-    async void RequestAtlas(string tag, Action<SpriteAtlas> callback)
-    {
-        if (spriteAtlas == null)
-        {
-            spriteAtlas = await _assetService.LoadAsync<SpriteAtlas>(tag);
-        }
-        callback(spriteAtlas);
-    }
-
-    public async Task init()
+    public async Task Init()
     {
         if (_inited)
         {
             await Task.CompletedTask;
         }
 
-        SpriteAtlasManager.atlasRequested += RequestAtlas;
-
-        newGame = new Signal();
-        resumeGame = new Signal();
-        loadGame = new Signal();
-        quitGame = new Signal();
 
         _view = await _assetService.InstantiateAsync<MainMenuView>();
         _view.title.text = _localeManager.lookup("application_title");
-        _resumeButton = _uiCreator.addButton(_view.buttonContainer, new ButtonData(resumeGame.Dispatch, _localeManager.lookup("application_resume"), null, BUTTON_PREFAB));
-        _loadButton = _uiCreator.addButton(_view.buttonContainer, new ButtonData(loadGame.Dispatch, _localeManager.lookup("application_load"), null, BUTTON_PREFAB));
-        _uiCreator.addButton(_view.buttonContainer, new ButtonData(newGame.Dispatch, _localeManager.lookup("application_new"), null, BUTTON_PREFAB));
-        _uiCreator.addButton(_view.buttonContainer, new ButtonData(quitGame.Dispatch, _localeManager.lookup("application_quit"), null, BUTTON_PREFAB));
+        _resumeButton = _uiCreator.addButton(_view.buttonContainer, new ButtonData(() => ResumeGame?.Invoke(), _localeManager.lookup("application_resume"), null, BUTTON_PREFAB));
+        _loadButton = _uiCreator.addButton(_view.buttonContainer, new ButtonData(() => LoadGame?.Invoke(), _localeManager.lookup("application_load"), null, BUTTON_PREFAB));
+        _uiCreator.addButton(_view.buttonContainer, new ButtonData(() => NewGame?.Invoke(), _localeManager.lookup("application_new"), null, BUTTON_PREFAB));
+        _uiCreator.addButton(_view.buttonContainer, new ButtonData(() => QuitGame?.Invoke(), _localeManager.lookup("application_quit"), null, BUTTON_PREFAB));
 
         _inited = true;
     }
 
-    public void show(bool show = true, float fadeTime = -1)
+    public void Show(bool show = true, float fadeTime = -1)
     {
         _view.show(show, fadeTime);
     }
 
-    public void allowResume(bool allow)
+    public void AllowResume(bool allow)
     {
         _resumeButton.gameObject.SetActive(allow);
     }
 
-    public void allowLoad(bool allow)
+    public void AllowLoad(bool allow)
     {
         _loadButton.gameObject.SetActive(allow);
     }

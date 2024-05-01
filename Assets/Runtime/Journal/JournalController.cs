@@ -1,11 +1,10 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using signals;
 
 public class JournalController
 {
-    public Signal closeButtonClicked;
+    public Action CloseButtonClicked;
     private JournalView _view;
     private bool _showing = false;
     readonly CharacterManager _characterManager;
@@ -17,8 +16,6 @@ public class JournalController
         _characterManager = characterManager;
         _localeManager = localeManager;
         _addressablesAssetService = addressablesAssetService;
-
-        init();
     }
 
     public async void show(bool show = true, bool animate = true)
@@ -28,7 +25,7 @@ public class JournalController
         if (_view == null)
         {
             _view = await _addressablesAssetService.InstantiateAsync<JournalView>();
-            _view.closeButton.onClick.AddListener(closeButtonClicked.Dispatch);
+            _view.closeButton.onClick.AddListener(()=> CloseButtonClicked?.Invoke());
             _view.noEntriesOverlay.gameObject.SetActive(true);
         }
 
@@ -42,11 +39,6 @@ public class JournalController
             _view.Hide(animate);
         }
         
-    }
-
-    private void init()
-    {
-        closeButtonClicked = new Signal();
     }
 
     private void updateCharacters()
@@ -77,7 +69,7 @@ public class JournalController
 
     private void addCharacter(string characterId)
     {
-        PortraitView portrait = Object.Instantiate(_view.characterPortraitEntry, _view.characterListEntries.transform);
+        PortraitView portrait = GameObject.Instantiate(_view.characterPortraitEntry, _view.characterListEntries.transform);
         string emotion = null;
         float totalStatus = _characterManager.GetTotalStatus(characterId);
         if (totalStatus > 0)
@@ -110,7 +102,7 @@ public class JournalController
 
         foreach (CharacterDetail characterDetail in characterBio.details)
         {
-            CharacterDetailView characterDetailView = Object.Instantiate(_view.characterDetailEntry, _view.characterDetailsEntries.transform);
+            CharacterDetailView characterDetailView = GameObject.Instantiate(_view.characterDetailEntry, _view.characterDetailsEntries.transform);
             characterDetailView.detailText.text = _localeManager.lookup(characterDetail.detailLabel) + " : " + _localeManager.lookup(characterDetail.detailText);
         }
     }

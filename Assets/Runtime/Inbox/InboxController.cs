@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using signals;
+using System;
 
 public class InboxController
 {
-    public Signal closeButtonClicked;
+    public Action CloseButtonClicked;
     private Dictionary<double, InboxListItemView> _messageListElements;
     private InboxMessage _selectedMessage;
     private int _totalRead = 0;
@@ -27,12 +27,10 @@ public class InboxController
 
     private void init()
     {
-        closeButtonClicked = new Signal();
-
-        GameObject prefab = (GameObject)Object.Instantiate(Resources.Load(PREFAB));
+        GameObject prefab = (GameObject)GameObject.Instantiate(Resources.Load(PREFAB));
         _view = prefab.GetComponent<InboxView>();
         _view.deleteReadMessages.onClick.AddListener(verifyDeleteReadMessages);
-        _view.closeButton.onClick.AddListener(closeButtonClicked.Dispatch);
+        _view.closeButton.onClick.AddListener(()=>CloseButtonClicked?.Invoke());
         _messageListElements = new Dictionary<double, InboxListItemView>();
 
         List<InboxMessage> inboxMessages = new List<InboxMessage>();
@@ -95,7 +93,7 @@ public class InboxController
             if (!_messageListElements.ContainsKey(message.sentDate))
             {
                 //InboxListItemView inboxListItem = null;// _view.inboxListItemContainer.AddChildPrefab(_view.inboxListItemPrefab, item => item.init(message, () => showMessage(message)));
-                InboxListItemView inboxListItem = Object.Instantiate(_view.inboxListItemPrefab, _view.inboxListItemContainer.transform);
+                InboxListItemView inboxListItem = GameObject.Instantiate(_view.inboxListItemPrefab, _view.inboxListItemContainer.transform);
                 inboxListItem.init(message, () => showMessage(message));
                 _messageListElements[message.sentDate] = inboxListItem;
             }
@@ -184,7 +182,7 @@ public class InboxController
             updateTotalRead();
 
             //_view.inboxItemContainer.AddChildPrefab(_view.inboxItemPrefab, item => item.init(message, showMessages));
-            InboxItemView inboxItem = Object.Instantiate(_view.inboxItemPrefab, _view.inboxItemContainer.transform);
+            InboxItemView inboxItem = GameObject.Instantiate(_view.inboxItemPrefab, _view.inboxItemContainer.transform);
             inboxItem.init(message);
         }
     }

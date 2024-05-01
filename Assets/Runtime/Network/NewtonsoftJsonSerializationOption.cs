@@ -11,7 +11,6 @@ public class NewtonsoftJsonSerializationOption : ISerializationOption
         try
         {
             var result = JsonConvert.DeserializeObject<T>(text);
-            Debug.Log($"Success: {text}");
             return result;
         }
         catch (Exception ex)

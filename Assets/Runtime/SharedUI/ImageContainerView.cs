@@ -10,15 +10,6 @@ public class ImageContainerView : MonoBehaviour
     private Texture _currentTexture;
     private bool _showing = true;
 
-    public void loadRemoteImage(string assetId, RemoteAssetLoader remoteAssetLoader)
-    {
-        RemoteAssetRequest request = new RemoteAssetRequest();
-        request.assetId = assetId;
-        request.complete.AddOnce((UnityWebRequest assetRequest) => addTexture(assetRequest));
-
-        remoteAssetLoader.sendRequest(request);
-    }
-
     public void loadImageResource(string localResourcePath)
     {
         image.sprite = Resources.Load<Sprite>(localResourcePath);

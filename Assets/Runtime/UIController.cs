@@ -1,12 +1,10 @@
 using UnityEngine;
-using signals;
 using UnityEngine.UI;
 using DG.Tweening;
 using System.Threading.Tasks;
 
 public class UIController
 {
-    public Signal fadeComplete;
     private GameObject _fadeScreen;
     private const float FADE_TIME = 0.5f;
     readonly UICreator _uiCreator;
@@ -26,29 +24,22 @@ public class UIController
         init();
     }
 
-    private async void init()
-    {
-        fadeComplete = new Signal();
-        _hudController.showScreen.Add(handleShowScreen);
-        await _textOverlayController.Init();
-    }
-
-    public void showClock(bool show, double costInMinutes = 0)
+    public void ShowClock(bool show, double costInMinutes = 0)
     {
         _hudController.showClock(show, costInMinutes);
     }
 
-    public void showHud(bool show = true)
+    public void ShowHud(bool show = true)
     {
         _hudController.show(show);
         _textOverlayController.show(show);
     }
 
-    public void showJournal(bool show = true)
+    public void ShowJournal(bool show = true)
     {
         if (show)
         {
-            _journalController.closeButtonClicked.AddOnce(handleJournalClose);
+            _journalController.CloseButtonClicked += handleJournalClose;
             pauseGame();
         }
         else
@@ -59,18 +50,18 @@ public class UIController
         _journalController.show(show);
     }
 
-    public void setText(string text)
+    public void SetText(string text)
     {
         _textOverlayController.show();
         _textOverlayController.setText(text);
     }
 
-    public void showText(bool show = true)
+    public void ShowText(bool show = true)
     {
         _textOverlayController.show(show);
     }
 
-    public void showBlackScreen(bool show = true)
+    public void ShowBlackScreen(bool show = true)
     {
         if (_fadeScreen == null)
         {
@@ -80,7 +71,7 @@ public class UIController
         _fadeScreen.SetActive(show);
     }
 
-    public async Task fade(bool fadeIn, Color color = default(Color), float fadeTime = -1, float delay = 0f)
+    public async Task Fade(bool fadeIn, Color color = default(Color), float fadeTime = -1, float delay = 0f)
     {
         if (fadeTime == -1)
         {
@@ -111,7 +102,12 @@ public class UIController
         image.color = color;
 		await image.DOFade(finalAlpha, fadeTime).SetDelay(delay).AsyncWaitForCompletion();
         if (finalAlpha == 0) { _fadeScreen.SetActive(false); }
-        handleFadeComplete();
+    }
+
+    private async void init()
+    {
+        _hudController.ShowScreen += handleShowScreen;
+        await _textOverlayController.Init();
     }
 
     private void pauseGame()
@@ -130,19 +126,14 @@ public class UIController
         {
             case Screens.Name.MainMenu :
                 _applicationMessagePublisher.Publish(new ApplicationMessage(ApplicationAction.ShowMainMenu));
-                showHud(false);
+                ShowHud(false);
                 break;
 
             case Screens.Name.Journal:
-                showJournal(true);
-                showHud(false);
+                ShowJournal(true);
+                ShowHud(false);
                 break;
         }
-    }
-
-    private void handleFadeComplete()
-    {
-        fadeComplete.Dispatch();
     }
 
     private void handleJournalClose()

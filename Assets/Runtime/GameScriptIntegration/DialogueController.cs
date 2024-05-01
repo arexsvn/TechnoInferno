@@ -47,7 +47,7 @@ namespace GameScriptIntegration
         {
             _dialogueView = await _assetService.InstantiateAsync<DialogueView>();
             _dialogueView.gameObject.SetActive(false);
-            _dialogueView.backgroundClick.Add(handleBackgroundClicked);
+            _dialogueView.BackgroundClick += handleBackgroundClicked;
         }
 
         public void Start(string id)
@@ -104,12 +104,12 @@ namespace GameScriptIntegration
                 string choiceText = node.UIResponseText.GetLocalization(_locale);
                 ChoiceView choiceView = await _assetService.InstantiateAsync<ChoiceView>(_dialogueView.ChoiceContainer.transform);
                 choiceView.textArea.text = choiceText.Trim();
-                choiceView.click.AddOnce(() =>
+                choiceView.Clicked += () =>
                 {
                     _dialogueView.ShowChoices(false);
                     _dialogueView.ClearChoices();
                     decisionNotifier.OnDecisionMade(node);
-                });
+                };
             }
 
             _dialogueView.ShowChoices();

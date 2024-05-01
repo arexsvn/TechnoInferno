@@ -13,7 +13,6 @@ public class ApplicationScope : LifetimeScope
         builder.Register<HudController>(Lifetime.Singleton);
         builder.Register<TextOverlayController>(Lifetime.Singleton);
         builder.Register<LocaleManager>(Lifetime.Singleton);
-        builder.Register<AssetsManifest>(Lifetime.Singleton);
         builder.Register<CharacterManager>(Lifetime.Singleton);
         builder.Register<JournalController>(Lifetime.Singleton);
         builder.Register<SaveStateController>(Lifetime.Singleton);
@@ -21,7 +20,6 @@ public class ApplicationScope : LifetimeScope
         builder.Register<CameraController>(Lifetime.Singleton);
         builder.Register<ClockController>(Lifetime.Singleton);
         builder.Register<WebRequestService>(Lifetime.Singleton);
-        builder.Register<ConnectionConfiguration>(Lifetime.Singleton);
         builder.Register<BasicDialogController>(Lifetime.Singleton);
         builder.Register<InventoryController>(Lifetime.Singleton);
 
@@ -36,7 +34,6 @@ public class ApplicationScope : LifetimeScope
 
         // Feature-specific and special case installers
         new DynamicGameObjectInstaller().Install(builder);
-        new UserInstaller().Install(builder);
         new GameScriptIntegration.GameScriptInstaller().Install(builder);
     }
 }

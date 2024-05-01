@@ -1,13 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using signals;
 using UnityEngine.UI;
 
 public class HotspotView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    public Signal over = new Signal();
-    public Signal off = new Signal();
-    public Signal click = new Signal();
+    public Action Over;
+    public Action Off;
+    public Action Click;
 
     public void Start()
     {
@@ -22,23 +22,20 @@ public class HotspotView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         Button button = gameObject.GetComponentInChildren<Button>();
         button.onClick.RemoveListener(OnClick);
-        click.RemoveAll();
-        over.RemoveAll();
-        off.RemoveAll();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        over.Dispatch();
+        Over?.Invoke();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        off.Dispatch();
+        Off?.Invoke();
     }
 
     private void OnClick()
     {
-        click.Dispatch();
+        Click?.Invoke();
     }
 }

@@ -38,7 +38,7 @@ public class SceneController : ISceneController
     {
         if (fadeInBlack)
         {
-            await _uiController.fade(true);
+            await _uiController.Fade(true);
         }
 
         if (_currentSceneId != null && _loadedScenes.ContainsKey(_currentSceneId))
@@ -62,14 +62,13 @@ public class SceneController : ISceneController
 
         refreshHotspots();
 
-        await _uiController.fade(false);
+        await _uiController.Fade(false);
     }
 
     private void StartText(string id)
     {
-        _uiController.showClock(false);
-        _uiController.showText(false);
-        _uiController.fadeComplete.RemoveAll();
+        _uiController.ShowClock(false);
+        _uiController.ShowText(false);
 
         _dialogController.Start(id);
     }
@@ -104,9 +103,9 @@ public class SceneController : ISceneController
         }
         foreach (Hotspot hotspot in scene.view.hotspotsContainer.GetComponentsInChildren<Hotspot>())
         {
-            hotspot.view.click.Add(() => handleHotspotClick(hotspot));
-            hotspot.view.over.Add(() => handleHotspotOver(hotspot));
-            hotspot.view.off.Add(() => handleHotspotOff(hotspot));
+            hotspot.view.Click += () => handleHotspotClick(hotspot);
+            hotspot.view.Over += () => handleHotspotOver(hotspot);
+            hotspot.view.Off += () => handleHotspotOff(hotspot);
         }
     }
 
@@ -228,7 +227,7 @@ public class SceneController : ISceneController
 
         if (!string.IsNullOrEmpty(labelText))
         {
-            _uiController.setText(labelText);
+            _uiController.SetText(labelText);
         }
     }
 
@@ -244,7 +243,7 @@ public class SceneController : ISceneController
             _currentScene.customSceneController.handleHotspotOff(hotspot);
         }
 
-        _uiController.showText(false);
-        _uiController.showClock(false);
+        _uiController.ShowText(false);
+        _uiController.ShowClock(false);
     }
 }

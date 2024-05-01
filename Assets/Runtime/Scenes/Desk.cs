@@ -11,7 +11,7 @@ class Desk : CustomSceneController
     {
         if (hotspot.type == Hotspot.Type.Action)
         {
-            _inboxController.closeButtonClicked.AddOnce(handleInboxClose);
+            _inboxController.CloseButtonClicked += handleInboxClose;
             _inboxController.show();
         }
     }
@@ -20,7 +20,7 @@ class Desk : CustomSceneController
     {
         if (hotspot.type == Hotspot.Type.Action)
         {
-            _uiController.setText("Use PC");
+            _uiController.SetText("Use PC");
         }
     }
 
@@ -33,9 +33,8 @@ class Desk : CustomSceneController
     {
         if (_inboxController.showing)
         {
-            _inboxController.closeButtonClicked.Remove(handleInboxClose);
+            _inboxController.CloseButtonClicked -= handleInboxClose;
             _inboxController.show(false);
-            //unpauseGame.Dispatch();
         }
     }
 }

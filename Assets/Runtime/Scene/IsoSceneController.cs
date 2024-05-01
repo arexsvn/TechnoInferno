@@ -43,11 +43,11 @@ public class IsoSceneController : ISceneController
     {
         if (fadeInBlack)
         {
-            await _uiController.fade(true);
+            await _uiController.Fade(true);
         }
 
         // Load additive scene???
 
-        await _uiController.fade(false);
+        await _uiController.Fade(false);
     }
 }

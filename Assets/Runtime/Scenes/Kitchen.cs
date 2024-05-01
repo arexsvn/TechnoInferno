@@ -9,7 +9,7 @@ class Kitchen : CustomSceneController
     {
         if (id == "evening_decision_leave" || id == "evening_decision_stay")
         {
-            _uiController.showJournal(true);
+            _uiController.ShowJournal(true);
         }
     }
 }

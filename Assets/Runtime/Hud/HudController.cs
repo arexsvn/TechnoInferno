@@ -1,9 +1,9 @@
+using System;
 using UnityEngine;
-using signals;
 
 public class HudController
 {
-    public Signal<Screens.Name> showScreen;
+    public Action<Screens.Name> ShowScreen;
     private HudView _view;
     private readonly ClockController _clockController;
     private readonly AddressablesAssetService _assetService;
@@ -19,11 +19,9 @@ public class HudController
     {
         _clockController.init();
 
-        showScreen = new Signal<Screens.Name>();
-
         _view = await _assetService.InstantiateAsync<HudView>();
-        _view.over.Add(() => show(true));
-        _view.off.Add(() => show(false));
+        _view.Over += () => show(true);
+        _view.Off += () => show(false);
 
         _view.canvasGroup.alpha = 0f;
 
@@ -33,7 +31,7 @@ public class HudController
 
     private void addElement(string label, Screens.Name screenName)
     {
-        ButtonView hudElement = Object.Instantiate(_view.hudElement, _view.buttonContainer.transform);
+        ButtonView hudElement = GameObject.Instantiate(_view.hudElement, _view.buttonContainer.transform);
         hudElement.labelText.text = label;
         hudElement.button.onClick.AddListener(()=>hudElementClicked(screenName));
     }
@@ -50,6 +48,6 @@ public class HudController
 
     private void hudElementClicked(Screens.Name screenName)
     {
-        showScreen.Dispatch(screenName);
+        ShowScreen?.Invoke(screenName);
     }
 }

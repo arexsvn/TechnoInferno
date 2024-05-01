@@ -1,11 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using signals;
+using System;
 
 public class DialogueView : MonoBehaviour
 {
-    public Signal backgroundClick = new Signal();
+    public Action BackgroundClick;
     [SerializeField] public GameObject ChoiceContainer;
 
     [SerializeField] private PortraitView _portraitView;
@@ -94,7 +94,6 @@ public class DialogueView : MonoBehaviour
     public void OnDestroy()
     {
         _backgroundButton.onClick.RemoveListener(OnBackgroundClick);
-        backgroundClick.RemoveAll();
     }
 
     public void ClearChoices()
@@ -188,6 +187,6 @@ public class DialogueView : MonoBehaviour
 
     private void OnBackgroundClick()
     {
-        backgroundClick.Dispatch();
+        BackgroundClick?.Invoke();
     }
 }

@@ -2,12 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
-using signals;
 
 public class SaveStateController
 {
-    public Signal<SaveState> saveGameSelected;
-    public Signal closeButtonClicked;
+    public Action<SaveState> SaveGameSelected;
+    public Action CloseButtonClicked;
     private SaveState _currentSave;
     private GameConfig _gameConfig;
     private string _gameConfigFileName = "config.txt";
@@ -200,13 +199,10 @@ public class SaveStateController
         _currentSave.UpgradedStats = new Dictionary<string, float>();
         _currentSave.Inventory = new Inventory();
 
-        saveGameSelected = new Signal<SaveState>();
-        closeButtonClicked = new Signal();
-
         GameObject prefab = (GameObject)UnityEngine.Object.Instantiate(Resources.Load(SAVE_GAME_SELECTOR_PREFAB));
         _view = prefab.GetComponent<SaveGameSelectionView>();
         _view.show(false, 0);
-        _view.closeButton.onClick.AddListener(closeButtonClicked.Dispatch);
+        _view.closeButton.onClick.AddListener(()=>CloseButtonClicked?.Invoke());
 
         string saveDirectoryPath = Path.Combine(Application.persistentDataPath, _saveFolderPath);
         if (!Directory.Exists(saveDirectoryPath))
@@ -252,7 +248,7 @@ public class SaveStateController
         _currentSave = saveGame;
         _gameConfig.CurrentSaveId = _currentSave.Id;
         saveConfig();
-        saveGameSelected.Dispatch(saveGame);
+        SaveGameSelected?.Invoke(saveGame);
     }
 
     private void resetCurrentSave()

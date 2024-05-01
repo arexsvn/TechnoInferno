@@ -36,7 +36,7 @@ public class GameController : ITickable, ILateTickable, IFixedTickable, IInitial
 
     public async void Initialize()
     {
-        _uiController.showBlackScreen();
+        _uiController.ShowBlackScreen();
 
         _applicationMessageSubscriber.Subscribe(OnApplicationMessage);
 
@@ -61,14 +61,14 @@ public class GameController : ITickable, ILateTickable, IFixedTickable, IInitial
         }
         _sceneController.LoadScene(_saveStateController.CurrentSave.SceneId);
 
-        await _mainMenuController.init();
-        _mainMenuController.newGame.Add(handleNewGame);
-        _mainMenuController.resumeGame.Add(handleResumeGame);
-        _mainMenuController.loadGame.Add(handleLoadGame);
-        _mainMenuController.quitGame.Add(handleQuit);
+        await _mainMenuController.Init();
+        _mainMenuController.NewGame += handleNewGame;
+        _mainMenuController.ResumeGame += handleResumeGame;
+        _mainMenuController.LoadGame += handleLoadGame;
+        _mainMenuController.QuitGame += handleQuit;
 
-        _mainMenuController.allowResume(!newGame);
-        _mainMenuController.allowLoad(!newGame && _saveStateController.GetTotalSaves() > 0);
+        _mainMenuController.AllowResume(!newGame);
+        _mainMenuController.AllowLoad(!newGame && _saveStateController.GetTotalSaves() > 0);
         showMainMenu();
     }
 
@@ -79,7 +79,7 @@ public class GameController : ITickable, ILateTickable, IFixedTickable, IInitial
             fadeTime = 0;
         }
         
-        _mainMenuController.show(show, fadeTime);
+        _mainMenuController.Show(show, fadeTime);
 
         if (show)
         {
@@ -87,7 +87,7 @@ public class GameController : ITickable, ILateTickable, IFixedTickable, IInitial
 
             if (fadeFromBlack)
             {
-                await _uiController.fade(false, default(Color), -1, 1f);
+                await _uiController.Fade(false, default(Color), -1, 1f);
             }
         }
     }
@@ -135,7 +135,7 @@ public class GameController : ITickable, ILateTickable, IFixedTickable, IInitial
     private async void handleNewGame()
     {
         _dialogueController.Stop();
-        await _uiController.fade(true);
+        await _uiController.Fade(true);
         newGame();
     }
 
@@ -147,23 +147,25 @@ public class GameController : ITickable, ILateTickable, IFixedTickable, IInitial
 
     private void handleLoadGame()
     {
-        _saveStateController.saveGameSelected.AddOnce(handleSaveGameSelected);
-        _saveStateController.closeButtonClicked.AddOnce(handleSaveGameSelectionClosed);
+        _saveStateController.SaveGameSelected -= handleSaveGameSelected;
+        _saveStateController.CloseButtonClicked -= handleSaveGameSelectionClosed;
+        _saveStateController.SaveGameSelected += handleSaveGameSelected;
+        _saveStateController.CloseButtonClicked += handleSaveGameSelectionClosed;
         _saveStateController.Show();
     }
 
     private void handleSaveGameSelectionClosed()
     {
-        _saveStateController.saveGameSelected.RemoveAll();
-        _saveStateController.closeButtonClicked.RemoveAll();
+        _saveStateController.SaveGameSelected -= handleSaveGameSelected;
+        _saveStateController.CloseButtonClicked -= handleSaveGameSelectionClosed;
         _saveStateController.Show(false);
     }
 
     private async void handleSaveGameSelected(SaveState saveGame)
     {
         _dialogueController.Stop();
-        _uiController.fadeComplete.AddOnce(() => loadGame(saveGame));
-        await _uiController.fade(true);
+        await _uiController.Fade(true);
+        loadGame(saveGame);
         handleSaveGameSelectionClosed();
     }
 
@@ -178,8 +180,8 @@ public class GameController : ITickable, ILateTickable, IFixedTickable, IInitial
     private void newGame()
     {
         showMainMenu(false, true, 0);
-        _mainMenuController.allowResume(true);
-        _mainMenuController.allowLoad(true);
+        _mainMenuController.AllowResume(true);
+        _mainMenuController.AllowLoad(true);
 
         _saveStateController.CreateNewSave();
         _sceneController.LoadScene(START_SCENE);
