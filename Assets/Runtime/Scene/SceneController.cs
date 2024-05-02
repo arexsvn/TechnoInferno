@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 public class SceneController : ISceneController
 {
@@ -8,6 +9,7 @@ public class SceneController : ISceneController
     private string _currentSceneId;
     private string _previousSceneId;
     private Scene _currentScene;
+
     readonly UIController _uiController;
     readonly IDialogueController _dialogController;
     readonly LocaleManager _localeManager;
@@ -193,14 +195,16 @@ public class SceneController : ISceneController
         // TODO, switch this to use a map of action type to commands or methods instead of if/else checks for each action type.
         foreach (AAction action in actions) 
         { 
-            if (action is ActionConversation)
+            switch (action)
             {
-                await StartText((action as ActionConversation).Conversation.Id.ToString());
-            }
-            else if (action is ActionLoadScene) 
-            {
-                _saveGameManager.SaveScene((action as ActionLoadScene).Id);
-                await LoadScene((action as ActionLoadScene).Id, true);
+                case ActionConversation actionConversation:
+                    await StartText(actionConversation.Conversation.Id.ToString());
+                    break;
+
+                case ActionLoadScene actionLoadScene:
+                    _saveGameManager.SaveScene(actionLoadScene.Id);
+                    await LoadScene(actionLoadScene.Id, true);
+                    break;
             }
         }
     }
