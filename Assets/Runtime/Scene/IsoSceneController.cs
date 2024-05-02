@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class IsoSceneController : ISceneController
@@ -39,7 +40,7 @@ public class IsoSceneController : ISceneController
 
     }
 
-    public async void LoadScene(string sceneId, bool fadeInBlack = false)
+    public async Task LoadScene(string sceneId, bool fadeInBlack = false)
     {
         if (fadeInBlack)
         {

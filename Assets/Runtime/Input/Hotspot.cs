@@ -11,6 +11,7 @@ public class Hotspot : MonoBehaviour
     public HotspotView view;
     public List<string> hideForOutcomes;
     public List<string> showForOutcomes;
+    [SerializeField] public List<AAction> ActionList;
 
     public virtual string GetTextId()
     {

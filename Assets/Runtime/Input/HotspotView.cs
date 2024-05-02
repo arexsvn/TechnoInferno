@@ -11,9 +11,10 @@ public class HotspotView : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void Start()
     {
+        // wire click propogation
         Button button = gameObject.GetComponentInChildren<Button>();
         button.onClick.AddListener(OnClick);
-
+        // make hotspot invisible
         Image image = button.gameObject.GetComponentInChildren<Image>();
         image.color = new Color(0, 1, 0, 0);
     }

@@ -1,6 +1,7 @@
 using GameScript;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace GameScriptIntegration
@@ -23,6 +24,7 @@ namespace GameScriptIntegration
         private const string CHARACTER_EMOTION_PROPERTY = "emotion";
         private static float MIN_TEXT_SECONDS = 2f;
         private bool _autoAdvanceDialogue = false;
+        private bool _conversationActive = false;
 
         public DialogueController(CoroutineRunner coroutineRunner,
                                           CharacterManager characterManager,
@@ -50,13 +52,18 @@ namespace GameScriptIntegration
             _dialogueView.BackgroundClick += handleBackgroundClicked;
         }
 
-        public void Start(string id)
+        public async Task Start(string id)
         {
             _dialogueView.HideAll();
             _dialogueView.ClearChoices();
             _dialogueView.Show();
 
+            _conversationActive = true;
             _activeConversation = Runner.StartConversation(uint.Parse(id), this);
+            while(_conversationActive)
+            {
+                await Task.Delay(25);
+            }
         }
 
         public void Pause()
@@ -83,11 +90,13 @@ namespace GameScriptIntegration
         {
             _dialogueView.HideAll();
             readyNotifier.OnReady();
+            _conversationActive = false;
             DialogueComplete?.Invoke(conversation.Id.ToString());
         }
 
         public void OnError(Conversation conversation, Exception e)
         {
+            _conversationActive = false;
             Debug.LogError(e);
         }
 

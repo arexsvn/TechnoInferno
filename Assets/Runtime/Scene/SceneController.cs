@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class SceneController : ISceneController
 {
@@ -34,7 +35,7 @@ public class SceneController : ISceneController
         init();
     }
 
-    public async void LoadScene(string sceneId, bool fadeInBlack = false)
+    public async Task LoadScene(string sceneId, bool fadeInBlack = false)
     {
         if (fadeInBlack)
         {
@@ -62,15 +63,18 @@ public class SceneController : ISceneController
 
         refreshHotspots();
 
-        await _uiController.Fade(false);
+        if (fadeInBlack)
+        {
+            await _uiController.Fade(false);
+        }
     }
 
-    private void StartText(string id)
+    private async Task StartText(string id)
     {
         _uiController.ShowClock(false);
         _uiController.ShowText(false);
 
-        _dialogController.Start(id);
+        await _dialogController.Start(id);
     }
 
     private void setupScene(Scene scene)
@@ -155,7 +159,7 @@ public class SceneController : ISceneController
         return _dialogController.ShowingDialog;
     }
 
-    private void handleHotspotClick(Hotspot hotspot)
+    private async void handleHotspotClick(Hotspot hotspot)
     {
         if (hotspotsDisabled())
         {
@@ -171,23 +175,33 @@ public class SceneController : ISceneController
         {
             case Hotspot.Type.Move:
                 _saveGameManager.SaveScene(hotspot.destination.id);
-                LoadScene(hotspot.destination.id, true);
+                await LoadScene(hotspot.destination.id, true);
                 break;
-                /*
-            case Hotspot.Type.Item:
-                if (hotspot.GetTextId() != null)
-                {
-                    StartText(hotspot.GetTextId());
-                }
-                else
-                {
-                    _uiController.setText("You examine the " + hotspot.item.id + ".");
-                }
+
+            case Hotspot.Type.Action:
+                ProcessActions(hotspot.ActionList);
                 break;
-                */
+
             case Hotspot.Type.Text:
-                StartText(hotspot.GetTextId());
+                await StartText(hotspot.GetTextId());
                 break;
+        }
+    }
+
+    private async void ProcessActions(List<AAction> actions)
+    {
+        // TODO, switch this to use a map of action type to commands or methods instead of if/else checks for each action type.
+        foreach (AAction action in actions) 
+        { 
+            if (action is ActionConversation)
+            {
+                await StartText((action as ActionConversation).Conversation.Id.ToString());
+            }
+            else if (action is ActionLoadScene) 
+            {
+                _saveGameManager.SaveScene((action as ActionLoadScene).Id);
+                await LoadScene((action as ActionLoadScene).Id, true);
+            }
         }
     }
 
@@ -215,11 +229,14 @@ public class SceneController : ISceneController
                     labelText = _localeManager.lookup("hotspot_destination_label", new string[] { hotspot.destination.id });
                 }
                 break;
-                /*
-            case Hotspot.Type.Item:
-                labelText = _localeManager.lookup("hotspot_item_label", new string[] { hotspot.item.id });
+            /*
+        case Hotspot.Type.Item:
+            labelText = _localeManager.lookup("hotspot_item_label", new string[] { hotspot.item.id });
+            break;
+            */
+            case Hotspot.Type.Action:
+                labelText = _localeManager.lookup(hotspot.name.ToLower() + "_hotspot_label");
                 break;
-                */
             case Hotspot.Type.Text:
                 labelText = _localeManager.lookup(hotspot.name.ToLower() + "_hotspot_label");
                 break;

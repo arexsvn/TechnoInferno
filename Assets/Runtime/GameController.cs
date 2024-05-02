@@ -59,7 +59,7 @@ public class GameController : ITickable, ILateTickable, IFixedTickable, IInitial
         {
             _saveStateController.CurrentSave.SceneId = START_SCENE;
         }
-        _sceneController.LoadScene(_saveStateController.CurrentSave.SceneId);
+        await _sceneController.LoadScene(_saveStateController.CurrentSave.SceneId);
 
         await _mainMenuController.Init();
         _mainMenuController.NewGame += handleNewGame;

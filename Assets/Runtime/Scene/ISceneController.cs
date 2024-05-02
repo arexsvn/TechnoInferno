@@ -1,4 +1,6 @@
+using System.Threading.Tasks;
+
 public interface ISceneController
 {
-    void LoadScene(string sceneId, bool fadeInBlack = false);
+    Task LoadScene(string sceneId, bool fadeInBlack = false);
 }
